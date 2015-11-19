@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd">
+
+	<context:component-scan base-package="com.service;"/>
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="root"/>
+		<property name="jdbcUrl" value="jdbc:mysql:///test?useUnicode=true&amp;charact-erEncoding=UTF-8"/>
+		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="packagesToScan">
+			<array>
+				<value>com.entities.otm</value>
+			</array>
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.jdbc.batch_size">30</prop>
+				<prop key="hibernate.jdbc.fetch_size">100</prop>
+				<prop key="hibernate.connection.isolation">2</prop>
+				<prop key="hibernate.use_identifier_rollback">true</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.c3p0.min_size">3</prop>
+				<prop key="hibernate.c3p0.max_size">15</prop>
+				<prop key="hibernate.c3p0.max_statements">3</prop>
+				<prop key="hibernate.c3p0.acquire_increment">3</prop>
+				<prop key="hibernate.c3p0.timeout">30000</prop>
+				<prop key="hibernate.c3p0.idle_test_period">60000</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+	<jpa:repositories base-package="com.dao" entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"/>
+
+</beans>

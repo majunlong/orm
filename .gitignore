@@ -57,3 +57,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# The project file filter
+.project
+.springBeans
+.classpath
+/.settings/
+*/.settings/
+/target/
+*/target/
