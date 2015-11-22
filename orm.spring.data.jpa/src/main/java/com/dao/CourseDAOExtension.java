@@ -2,10 +2,11 @@ package com.dao;
 
 import java.util.List;
 
-import com.entities.otm.Course;
+import com.entities.relation.otm.Course;
+import com.model.StudentCourseModel;
 
 public interface CourseDAOExtension {
 
-	 List<Course> findByCourseAndPageable(Course course);
+	 List<StudentCourseModel> findByQBC(Course course);
 	
 }

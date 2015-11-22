@@ -1,15 +1,21 @@
-package com.test;
+package com.test.relation;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.entities.o2fo.Course;
-import com.entities.o2fo.Student;
+import com.entities.relation.oto.Course;
+import com.entities.relation.oto.Student;
 import com.enums.CourseType;
+import com.test.BaseTest;
 
-public class TestO2FO extends BaseTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:application-oto.xml")
+public class TestOneToOne extends BaseTest {
 	
 	@Test
 	public void testSave() {
@@ -40,7 +46,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentList() {
-		List<Student> students = this.session.createQuery("FROM com.entities.o2fo.Student").list();
+		List<Student> students = this.session.createQuery("FROM Student").list();
 		for (Student student : students) {
 			System.out.println(student);
 		}
@@ -49,7 +55,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentListLazy() {
-		List<Student> students = this.session.createQuery("FROM com.entities.o2fo.Student").list();
+		List<Student> students = this.session.createQuery("FROM Student").list();
 		for (Student student : students) {
 			student.initCourse();
 		}
@@ -61,7 +67,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentListFetch() {
-		List<Student> students = this.session.createQuery("FROM com.entities.o2fo.Student s LEFT JOIN FETCH s.course").list();
+		List<Student> students = this.session.createQuery("FROM Student s LEFT JOIN FETCH s.course").list();
 		for (Student student : students) {
 			System.out.println(student + "\t" + student.getCourse());
 		}
@@ -83,7 +89,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseList() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.o2fo.Course").list();
+		List<Course> courses = this.session.createQuery("FROM Course").list();
 		for (Course course : courses) {
 			System.out.println(course);
 		}
@@ -92,7 +98,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseListLazy() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.o2fo.Course").list();
+		List<Course> courses = this.session.createQuery("FROM Course").list();
 		for (Course course : courses) {
 			course.getStudent().hashCode();
 		}
@@ -104,7 +110,7 @@ public class TestO2FO extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseListFetch() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.o2fo.Course c LEFT JOIN FETCH c.student").list();
+		List<Course> courses = this.session.createQuery("FROM Course c LEFT JOIN FETCH c.student").list();
 		for (Course course : courses) {
 			System.out.println(course + "\t" + course.getStudent());
 		}

@@ -1,5 +1,6 @@
-package com.entities.embedded;
+package com.entities.embed;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,8 +24,10 @@ import lombok.ToString;
 public class Course {
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "STUDENT_COURSE_TYPE")
 	private CourseType type;
 
+	@Column(name = "STUDENT_COURSE_SCORE")
 	private Integer score;
 
 	@Parent

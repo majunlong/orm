@@ -1,4 +1,4 @@
-package com.entities.mtm;
+package com.entities.relation.mtm;
 
 import java.util.Set;
 
@@ -9,14 +9,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.enums.CourseType;
 
@@ -37,8 +36,7 @@ public class Course {
 
 	@Id
 	@Column(name = "COURSE_ID")
-	@GeneratedValue(generator = "system_native")
-	@GenericGenerator(name = "system_native", strategy = "native")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Enumerated(EnumType.STRING)

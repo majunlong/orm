@@ -1,4 +1,4 @@
-package com.entities.o2um;
+package com.entities.relation.oto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,13 +7,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import com.enums.CourseType;
 
@@ -29,13 +29,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "O2UM_COURSE", uniqueConstraints = { @UniqueConstraint(name = "UK_O2UM_STUDENT_ID", columnNames = { "STUDENT_ID" }) })
-@TableGenerator(name = "hibernateSequence", table = "HIBERNATE_SEQUENCE", pkColumnName = "ID_NAME", pkColumnValue = "O2UM_COURSE_ID", valueColumnName = "ID_VALUE", initialValue = 0, allocationSize = 1)
+@Table(name = "OTO_COURSE")
 public class Course {
 
 	@Id
 	@Column(name = "COURSE_ID")
-	@GeneratedValue(generator = "hibernateSequence", strategy = GenerationType.TABLE)
+	@GeneratedValue(generator = "foreign")
+	@GenericGenerator(name = "foreign", strategy = "foreign", parameters = { @Parameter(name = "property", value = "student") })
 	private Integer id;
 
 	@Enumerated(EnumType.STRING)
@@ -45,10 +45,10 @@ public class Course {
 	@Column(name = "COURSE_SCORE")
 	private Integer score;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STUDENT_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_O2UM_STUDENT_ID") )
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "FK_OTO_COURSE_ID"))
 	private Student student;
-
+	
 	public Course(CourseType type, Integer score) {
 		this.type = type;
 		this.score = score;

@@ -9,10 +9,13 @@
 
 	<context:component-scan base-package="com.service;com.dao;"/>
 
+	<context:property-placeholder ignore-unresolvable="true" location="classpath*:jdbc.properties"/>
+
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="user" value="root"/>
-		<property name="jdbcUrl" value="jdbc:mysql:///test?useUnicode=true&amp;charact-erEncoding=UTF-8"/>
-		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="driverClass" value="${jdbc.driverClassName}"/>
 	</bean>
 
 	<bean id="sessionFactory"
@@ -38,11 +41,7 @@
 		</property>
 		<property name="packagesToScan">
 			<array>
-				<value>com.entities.o2fo</value>
-				<value>com.entities.o2um</value>
-				<value>com.entities.embedded</value>
-				<value>com.entities.otm</value>
-				<value>com.entities.mtm</value>
+				<value>com.entities.relation.mtm</value>
 			</array>
 		</property>
 	</bean>

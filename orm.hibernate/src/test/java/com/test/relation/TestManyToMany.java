@@ -1,15 +1,21 @@
-package com.test;
+package com.test.relation;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.entities.mtm.Course;
-import com.entities.mtm.Student;
+import com.entities.relation.mtm.Course;
+import com.entities.relation.mtm.Student;
 import com.enums.CourseType;
+import com.test.BaseTest;
 
-public class TestMTM extends BaseTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:application-mtm.xml")
+public class TestManyToMany extends BaseTest {
 
 	@Test
 	public void testSave() {
@@ -46,7 +52,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentList() {
-		List<Student> students = this.session.createQuery("FROM com.entities.mtm.Student").list();
+		List<Student> students = this.session.createQuery("FROM Student").list();
 		for (Student student : students) {
 			System.out.println(student);
 		}
@@ -55,7 +61,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentListLazy() {
-		List<Student> students = this.session.createQuery("FROM com.entities.mtm.Student").list();
+		List<Student> students = this.session.createQuery("FROM Student").list();
 		for (Student student : students) {
 			student.getCourses().size();
 		}
@@ -70,7 +76,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentListFacth() {
-		List<Student> students = this.session.createQuery("SELECT distinct s FROM com.entities.mtm.Student s LEFT JOIN FETCH s.courses").list();
+		List<Student> students = this.session.createQuery("SELECT distinct s FROM Student s LEFT JOIN FETCH s.courses").list();
 		for (Student student : students) {
 			System.out.println(student);
 			for (Course course : student.getCourses()) {
@@ -98,7 +104,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseList() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.mtm.Course").list();
+		List<Course> courses = this.session.createQuery("FROM Course").list();
 		for (Course course : courses) {
 			System.out.println(course);
 		}
@@ -107,7 +113,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseListLazy() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.mtm.Course").list();
+		List<Course> courses = this.session.createQuery("FROM Course").list();
 		for (Course course : courses) {
 			course.getStudents().size();
 		}
@@ -122,7 +128,7 @@ public class TestMTM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseListFacth() {
-		List<Course> courses = this.session.createQuery("SELECT distinct c FROM com.entities.mtm.Course c LEFT JOIN FETCH c.students").list();
+		List<Course> courses = this.session.createQuery("SELECT distinct c FROM Course c LEFT JOIN FETCH c.students").list();
 		for (Course course : courses) {
 			System.out.println(course);
 			for (Student student : course.getStudents()) {

@@ -1,6 +1,4 @@
-package com.entities.otm;
-
-import java.util.Date;
+package com.entities.relation.otm;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,7 +17,6 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.GenericGenerator;
 
 import com.enums.CourseType;
 import com.model.PageModel;
@@ -30,32 +28,20 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = { "student" })
-@EqualsAndHashCode(exclude = { "student" })
+@ToString(exclude = { "student", "pageModel" })
+@EqualsAndHashCode(exclude = { "student", "pageModel" })
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "OTM_COURSE", uniqueConstraints = { @UniqueConstraint(name = "UK_OTM_COURSE_SELECTION", columnNames = { "STUDENT_ID", "COURSE_TYPE" }) })
-@NamedQuery(
-	name = "Course.findStudentByType",
-	query = "SELECT new com.entities.otm.Course(c.id, c.type, c.score, s.id, s.name, s.birth) "
-		+ "FROM com.entities.otm.Course c LEFT JOIN c.student s "
-		+ "WHERE c.type = :type AND c.score = ("
-		+ "SELECT MIN(cc.score) FROM com.entities.otm.Course cc WHERE c.type = cc.type"
-		+ ") ORDER BY s.id")
+@NamedQuery(name = "Course.NamedQuery",
+	query = "SELECT new com.model.StudentCourseModel(s.id, s.name, s.birth, c.id, c.type, c.score, c.results) "
+			+ "FROM Course c LEFT JOIN c.student s ORDER BY s.id, c.id")
 public class Course {
-
-	public Course(Integer id, CourseType type, Integer score, Integer studentId, String studentName, Date studentBirth) {
-		this.id = id;
-		this.type = type;
-		this.score = score;
-		this.student = new Student(studentId, studentName, studentBirth);
-	}
 
 	@Id
 	@Column(name = "COURSE_ID")
-	@GeneratedValue(generator = "system_native")
-	@GenericGenerator(name = "system_native", strategy = "native")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Enumerated(EnumType.STRING)
@@ -74,22 +60,10 @@ public class Course {
 
 	@Transient
 	private PageModel pageModel;
-	
+
 	public Course(CourseType type, Integer score) {
 		this.type = type;
 		this.score = score;
 	}
 
-	public Course(Integer id, CourseType type) {
-		super();
-		this.id = id;
-		this.type = type;
-	}
-	
-	
-	
-	
-	
-	
-	
 }

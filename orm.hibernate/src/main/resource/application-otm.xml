@@ -7,26 +7,21 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd">
 
-	<context:component-scan base-package="com.service;"/>
+	<context:component-scan base-package="com.service;com.dao;"/>
+
+	<context:property-placeholder ignore-unresolvable="true" location="classpath*:jdbc.properties"/>
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="user" value="root"/>
-		<property name="jdbcUrl" value="jdbc:mysql:///test?useUnicode=true&amp;charact-erEncoding=UTF-8"/>
-		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="driverClass" value="${jdbc.driverClassName}"/>
 	</bean>
 
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
-		<property name="packagesToScan">
-			<array>
-				<value>com.entities.relation.otm</value>
-			</array>
-		</property>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-		</property>
-		<property name="jpaProperties">
+		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
@@ -44,14 +39,17 @@
 				<prop key="hibernate.c3p0.idle_test_period">60000</prop>
 			</props>
 		</property>
+		<property name="packagesToScan">
+			<array>
+				<value>com.entities.relation.otm</value>
+			</array>
+		</property>
 	</bean>
 
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
-
-	<jpa:repositories base-package="com.dao" entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"/>
 
 </beans>

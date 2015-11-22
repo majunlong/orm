@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dao.StudentCourseDAO;
-import com.entities.otm.Course;
+import com.entities.relation.otm.Course;
 
 @Service
 public class StudentCourseService {
@@ -17,8 +17,8 @@ public class StudentCourseService {
 	private StudentCourseDAO studentCourseDAO;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Course> getByCourseAndPageable(Course course) {
-		return this.studentCourseDAO.getByCourseAndPageable(course);
+	public List<Course> findByQBC(Course course) {
+		return this.studentCourseDAO.findByQBC(course);
 	}
 
 }

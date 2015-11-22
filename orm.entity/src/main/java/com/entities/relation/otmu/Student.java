@@ -1,4 +1,4 @@
-package com.entities.o2um;
+package com.entities.relation.otmu;
 
 import java.util.Date;
 
@@ -26,8 +26,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "O2UM_STUDENT")
-@TableGenerator(name = "hibernateSequence", table = "HIBERNATE_SEQUENCE", pkColumnName = "ID_NAME", pkColumnValue = "O2UM_STUDENT_ID", valueColumnName = "ID_VALUE", initialValue = 0, allocationSize = 1)
+@Table(name = "OTMU_STUDENT")
+@TableGenerator(name = "hibernateSequence", table = "HIBERNATE_SEQUENCE", pkColumnName = "ID_NAME", pkColumnValue = "OTMU_STUDENT_ID", valueColumnName = "ID_VALUE", initialValue = 0, allocationSize = 1)
 public class Student {
 
 	@Id

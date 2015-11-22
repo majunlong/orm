@@ -1,5 +1,6 @@
 package com.test;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -8,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.entities.otm.Course;
-import com.entities.otm.Student;
+import com.dao.CourseDAO;
+import com.dao.StudentDAO;
+import com.entities.relation.otm.Course;
+import com.entities.relation.otm.Student;
 import com.enums.CourseType;
 import com.model.PageModel;
+import com.model.StudentCourseModel;
 import com.service.StudentCourseService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -19,48 +23,60 @@ import com.service.StudentCourseService;
 public class TestSpringDataJPA {
 
 	@Autowired
+	private CourseDAO courseDAO;
+	@Autowired
+	private StudentDAO studentDAO;
+	@Autowired
 	private StudentCourseService studentCourseService;
 
 	@Test
-	public void testCount() { // 查询英语分数大于60分的人数
-		Long count = this.studentCourseService.countByCourseTypeAndGreaterThanCourseScore(CourseType.ENGLISH, 60);
-		System.out.println("英语分数大于60分的学生人数:" + count);
+	public void testFind() {
+		Course course = this.courseDAO.findByStudent_nameAndType("张三", CourseType.MATHS);
+		System.out.println(course);
+	}
+	
+	@Test
+	public void testQuery() {
+		Student student = this.studentDAO.findByQuery("张三");
+		System.out.println(student);
 	}
 
 	@Test
-	public void testSum() { // 查询李四的总分
-		Long totalScor = (Long) this.studentCourseService.sumCourseScoreByName("李四");
-		System.out.println("李四的总分:" + totalScor);
-	}
-
-	@Test
-	public void testLeftJoin() { // 查询张三的数学成绩
-		Course course = this.studentCourseService.findByTypeAndStudentName(CourseType.MATHS, "张三");
-		System.out.println("科目\t成绩\t分数");
-		System.out.print(course.getType().getValue() + "\t");
-		System.out.print(course.getResults() + "\t");
-		System.out.print(course.getScore() + "\n");
-	}
-
-	@Test
-	public void testNamedHQL() { // 查询语文分数最低的学生和分数
-		List<Course> courses = this.studentCourseService.findByType(CourseType.CHINESE);
-		System.out.println("学生\t科目\t成绩\t分数");
-		for (Course course : courses) {
-			System.out.print(course.getStudent().getName() + "\t");
-			System.out.print(course.getType().getValue() + "\t");
-			System.out.print(course.getResults() + "\t");
-			System.out.print(course.getScore() + "\n");
+	public void testNamedNativeQuery1() {
+		List<StudentCourseModel> list = this.studentDAO.findByNamedNativeQuery1();
+		LinkedList<Course> courseList = new LinkedList<Course>();
+		for (StudentCourseModel model : list) {
+			model.buildCourseList(courseList);
+		}
+		for (Course course : courseList) {
+			System.out.println(course + "\t" + course.getStudent());
 		}
 	}
 
 	@Test
-	public void testNamedNativeSQL() { // 查询总分大于180分的学生和总分
-		List<Student> students = this.studentCourseService.findByGreaterThanTotalScore(180);
-		System.out.println("学生\t总分");
-		for (Student student : students) {
-			System.out.print(student.getName() + "\t");
-			System.out.print(student.getTotalScore() + "\n");
+	public void testNamedNativeQuery2() {
+		List<StudentCourseModel> list = this.studentDAO.findByNamedNativeQuery2();
+		LinkedList<Course> courseList = new LinkedList<Course>();
+		for (StudentCourseModel model : list) {
+			model.buildCourseList(courseList);
+		}
+		for (Course course : courseList) {
+			System.out.println(course + "\t" + course.getStudent());
+		}
+	}
+
+	@Test
+	public void testNamedQuery() {
+		List<StudentCourseModel> list = this.courseDAO.findByNamedQuery();
+		LinkedList<Student> studentList = new LinkedList<Student>();
+		for (StudentCourseModel model : list) {
+			model.buildStudentList(studentList);
+		}
+		for (Student student : studentList) {
+			System.out.println(student);
+			for (Course course : student.getCourses()) {
+				System.out.println("\t" + course);
+			}
 		}
 	}
 
@@ -73,19 +89,18 @@ public class TestSpringDataJPA {
 		// c.getStudent().setName("张三");
 		c.setPageModel(new PageModel());
 		c.getPageModel().setPage(1);
-		c.getPageModel().setSize(3);
-		List<Course> courses = this.studentCourseService.findByCourseAndPageable(c);
+		c.getPageModel().setSize(9);
+		List<Student> studentList = this.studentCourseService.findByQBC(c);
 		PageModel page = c.getPageModel();
 		System.out.println("页码：" + page.getPage());
 		System.out.println("页容：" + page.getSize());
 		System.out.println("总页：" + page.getTotalPages());
 		System.out.println("总行：" + page.getTotalRows());
-		System.out.println("学生\t科目\t成绩\t分数");
-		for (Course course : courses) {
-			System.out.print(course.getStudent().getName() + "\t");
-			System.out.print(course.getType().getValue() + "\t");
-			System.out.print(course.getResults() + "\t");
-			System.out.print(course.getScore() + "\n");
+		for (Student student : studentList) {
+			System.out.println(student);
+			for (Course course : student.getCourses()) {
+				System.out.println("\t" + course);
+			}
 		}
 	}
 
