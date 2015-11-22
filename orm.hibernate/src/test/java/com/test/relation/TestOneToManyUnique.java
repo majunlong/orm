@@ -1,15 +1,21 @@
-package com.test;
+package com.test.relation;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.entities.o2um.Course;
-import com.entities.o2um.Student;
+import com.entities.relation.otmu.Course;
+import com.entities.relation.otmu.Student;
 import com.enums.CourseType;
+import com.test.BaseTest;
 
-public class TestO2UM extends BaseTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:application-otmu.xml")
+public class TestOneToManyUnique extends BaseTest {
 	
 	@Test
 	public void testSave() {
@@ -33,7 +39,7 @@ public class TestO2UM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testStudentListFetch() {
-		List<Student> students = this.session.createQuery("FROM com.entities.o2um.Student s LEFT JOIN FETCH s.course").list();
+		List<Student> students = this.session.createQuery("FROM Student s LEFT JOIN FETCH s.course").list();
 		for (Student student : students) {
 			System.out.println(student + "\t" + student.getCourse());
 		}
@@ -48,7 +54,7 @@ public class TestO2UM extends BaseTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCourseList() {
-		List<Course> courses = this.session.createQuery("FROM com.entities.o2um.Course").list();
+		List<Course> courses = this.session.createQuery("FROM Course").list();
 		for (Course course : courses) {
 			System.out.println(course);
 		}

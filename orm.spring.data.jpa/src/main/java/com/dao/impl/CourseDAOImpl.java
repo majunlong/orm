@@ -13,12 +13,14 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 import com.dao.CourseDAOExtension;
-import com.entities.otm.Course;
-import com.entities.otm.Student;
+import com.entities.relation.otm.Course;
+import com.entities.relation.otm.Student;
 import com.enums.CourseType;
 import com.model.PageModel;
+import com.model.StudentCourseModel;
 
 public class CourseDAOImpl implements CourseDAOExtension {
 
@@ -61,20 +63,27 @@ public class CourseDAOImpl implements CourseDAOExtension {
 	}
 
 	@Override
-	public List<Course> findByCourseAndPageable(Course course) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List findByQBC(Course course) {
 		Long count = this.count(course);
 		if (count < 1) {
 			return null;
 		}
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<Course> query = builder.createQuery(Course.class);
+		CriteriaQuery<?> query = builder.createQuery();
 		Root<Course> root = query.from(Course.class);
 		root.join("student", JoinType.LEFT);
 		this.courseCriteria(course, builder, query, root, false);
 		Path<Student> studentPath = root.get("student");
-		query.select(builder.construct(Course.class, root.get("id").as(Integer.class), root.get("type").as(CourseType.class), root.get("score").as(Integer.class), studentPath.get("id").as(Integer.class), studentPath.get("name").as(String.class), studentPath.get("birth").as(Date.class)));
+		query.select((Selection) builder.construct(StudentCourseModel.class,
+			studentPath.get("id").as(Integer.class),
+			studentPath.get("name").as(String.class),
+			studentPath.get("birth").as(Date.class),
+			root.get("id").as(Integer.class),
+			root.get("type").as(CourseType.class),
+			root.get("score").as(Integer.class)));
 		query.orderBy(builder.asc(studentPath.get("id")), builder.asc(root.get("id")));
-		TypedQuery<Course> typedQuery = this.entityManager.createQuery(query);
+		TypedQuery<?> typedQuery = this.entityManager.createQuery(query);
 		PageModel pageModel = course.getPageModel();
 		pageModel.setRows(count);
 		typedQuery.setFirstResult(pageModel.getPage() - 1);

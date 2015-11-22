@@ -1,4 +1,4 @@
-package com.entities.mtm;
+package com.entities.relation.mtm;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -8,14 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,8 +33,7 @@ public class Student {
 
 	@Id
 	@Column(name = "STUDENT_ID")
-	@GeneratedValue(generator = "system_native")
-	@GenericGenerator(name = "system_native", strategy = "native")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(name = "STUDENT_NAME")

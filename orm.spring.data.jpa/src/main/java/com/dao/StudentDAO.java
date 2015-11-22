@@ -7,17 +7,18 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.entities.otm.Student;
-import com.enums.CourseType;
+import com.entities.relation.otm.Student;
+import com.model.StudentCourseModel;
 
 public interface StudentDAO extends JpaRepository<Student, Integer>, JpaSpecificationExecutor<Student> {
 
-	Long countByCourses_typeAndCourses_scoreGreaterThan(CourseType type, Integer score);
+	@Query("FROM Student s WHERE s.name = :name")
+	Student findByQuery(@Param("name") String name);
 
-	@Query("SELECT SUM(c.score) FROM com.entities.otm.Course c LEFT JOIN c.student s WHERE s.name = :name")
-	Long sumCourseScoreByName(@Param("name") String name);
-
-	@Query(name = "Student.findByTotalScoreGreaterThan", nativeQuery = true)
-	List<Student> findByTotalScoreGreaterThan(@Param("score") Integer score);
+	@Query(name = "Student.NamedNativeQuery1", nativeQuery = true)
+	List<StudentCourseModel> findByNamedNativeQuery1();
+	
+	@Query(name = "Student.NamedNativeQuery2", nativeQuery = true)
+	List<StudentCourseModel> findByNamedNativeQuery2();
 
 }

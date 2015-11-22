@@ -1,7 +1,6 @@
 package com.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -16,10 +15,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.entities.otm.Course;
-import com.entities.otm.Student;
-import com.enums.CourseType;
+import com.entities.relation.otm.Course;
+import com.entities.relation.otm.Student;
 import com.model.PageModel;
+import com.model.StudentCourseModel;
 
 @Repository
 public class StudentCourseDAO {
@@ -27,32 +26,8 @@ public class StudentCourseDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public static class CourseModel {
-
-		private Integer id;
-		private CourseType type;
-		private Integer score;
-		private Integer studentId;
-		private String studentName;
-		private Date studentBirth;
-
-		public Course initCourse() {
-			try {
-				return new Course(id, type, score, studentId, studentName, studentBirth);
-			} finally {
-				this.id = null;
-				this.type = null;
-				this.score = null;
-				this.studentId = null;
-				this.studentName = null;
-				this.studentBirth = null;
-			}
-		}
-
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<Course> getByCourseAndPageable(Course course) {
+	public List<Course> findByQBC(Course course) {
 		Criteria studentCriteria = null;
 		Student student = course.getStudent();
 		Session session = this.sessionFactory.getCurrentSession();
@@ -79,20 +54,26 @@ public class StudentCourseDAO {
 		if (studentCriteria == null) {
 			studentCriteria = criteria.createCriteria("student", "s", JoinType.LEFT_OUTER_JOIN);
 		}
-		criteria.setProjection(Projections.projectionList().add(Projections.property("c.id"), "id").add(Projections.property("c.type"), "type").add(Projections.property("c.score"), "score").add(Projections.property("s.id"), "studentId").add(Projections.property("s.name"), "studentName").add(Projections.property("s.birth"), "studentBirth"));
-		criteria.setResultTransformer(Transformers.aliasToBean(CourseModel.class));
+		criteria.setProjection(Projections.projectionList()
+			.add(Projections.property("s.id"), "studentId")
+			.add(Projections.property("s.name"), "studentName")
+			.add(Projections.property("s.birth"), "studentBirth")
+			.add(Projections.property("c.id"), "courseId")
+			.add(Projections.property("c.type"), "courseType")
+			.add(Projections.property("c.score"), "courseScore"));
+		criteria.setResultTransformer(Transformers.aliasToBean(StudentCourseModel.class));
 		criteria.addOrder(Order.asc("s.id"));
 		criteria.addOrder(Order.asc("c.id"));
 		PageModel pageModel = course.getPageModel();
 		pageModel.setRows(count);
 		criteria.setFirstResult((pageModel.getPage() - 1) * pageModel.getSize());
 		criteria.setMaxResults(pageModel.getSize());
-		List<CourseModel> modelList = criteria.list();
-		List<Course> list = new ArrayList<Course>();
-		for (CourseModel model : modelList) {
-			list.add(model.initCourse());
+		List<StudentCourseModel> list = criteria.list();
+		LinkedList<Course> courseList = new LinkedList<Course>();
+		for (StudentCourseModel model : list) {
+			model.buildCourseList(courseList);
 		}
-		return list;
+		return courseList;
 	}
 
 }

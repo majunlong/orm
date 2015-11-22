@@ -1,4 +1,4 @@
-package com.entities.o2fo;
+package com.entities.relation.oto;
 
 import java.util.Date;
 
@@ -26,8 +26,8 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude = { "course" })
 @NoArgsConstructor
 @Entity
-@Table(name = "O2FO_STUDENT")
-@TableGenerator(name = "hibernateSequence", table = "HIBERNATE_SEQUENCE", pkColumnName = "ID_NAME", pkColumnValue = "O2FO_STUDENT_ID", valueColumnName = "ID_VALUE", initialValue = 0, allocationSize = 1)
+@Table(name = "OTO_STUDENT")
+@TableGenerator(name = "hibernateSequence", table = "HIBERNATE_SEQUENCE", pkColumnName = "ID_NAME", pkColumnValue = "OTO_STUDENT_ID", valueColumnName = "ID_VALUE", initialValue = 0, allocationSize = 1)
 public class Student {
 
 	@Id
