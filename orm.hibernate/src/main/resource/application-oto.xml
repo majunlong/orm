@@ -12,37 +12,35 @@
 	<context:property-placeholder ignore-unresolvable="true" location="classpath*:jdbc.properties"/>
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="jdbcUrl" value="${jdbc.url}"/>
-		<property name="user" value="${jdbc.username}"/>
-		<property name="password" value="${jdbc.password}"/>
-		<property name="driverClass" value="${jdbc.driverClassName}"/>
+		<property name="user" value="${c3p0.user}"/>
+		<property name="jdbcUrl" value="${c3p0.jdbcUrl}"/>
+		<property name="password" value="${c3p0.password}"/>
+		<property name="driverClass" value="${c3p0.driverClass}"/>
 	</bean>
 
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
+		<property name="packagesToScan" value="com.entities.relation.oto"/>
+		<property name="entityInterceptor">
+			<bean class="com.support.interceptor.CustomInterceptor"/>
+		</property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.jdbc.batch_size">30</prop>
-				<prop key="hibernate.jdbc.fetch_size">100</prop>
-				<prop key="hibernate.connection.isolation">2</prop>
-				<prop key="hibernate.use_identifier_rollback">true</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-				<prop key="hibernate.c3p0.min_size">3</prop>
-				<prop key="hibernate.c3p0.max_size">15</prop>
-				<prop key="hibernate.c3p0.max_statements">3</prop>
-				<prop key="hibernate.c3p0.acquire_increment">3</prop>
-				<prop key="hibernate.c3p0.timeout">30000</prop>
-				<prop key="hibernate.c3p0.idle_test_period">60000</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+				<prop key="hibernate.connection.isolation">${hibernate.connection.isolation}</prop>
+				<prop key="hibernate.use_identifier_rollback">${hibernate.use_identifier_rollback}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.c3p0.min_size">${hibernate.c3p0.min_size}</prop>
+				<prop key="hibernate.c3p0.max_size">${hibernate.c3p0.max_size}</prop>
+				<prop key="hibernate.c3p0.max_statements">${hibernate.c3p0.max_statements}</prop>
+				<prop key="hibernate.c3p0.timeout">${hibernate.c3p0.timeout}</prop>
+				<prop key="hibernate.c3p0.idle_test_period">${hibernate.c3p0.idle_test_period}</prop>
+				<prop key="hibernate.c3p0.acquire_increment">${hibernate.c3p0.acquire_increment}</prop>
 			</props>
-		</property>
-		<property name="packagesToScan">
-			<array>
-				<value>com.entities.relation.oto</value>
-			</array>
 		</property>
 	</bean>
 
